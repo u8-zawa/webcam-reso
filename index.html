@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <title>Webcam (Mobile, Resolution Switch)</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body>
+  <main class="wrap">
+    <header class="bar">
+      <h1>📷 Webcam</h1>
+      <div class="controls">
+        <label class="select">
+          <span>Resolution</span>
+          <select id="resolution">
+            <option value="3840x2160">3840×2160 (4K UHD)</option>
+            <option value="2880x1620">2880×1620 (2.8K)</option>
+            <option value="1920x1080" selected>1920×1080 (FHD)</option>
+          </select>
+        </label>
+
+        <button id="startBtn" class="btn primary">Start</button>
+        <button id="stopBtn" class="btn">Stop</button>
+      </div>
+    </header>
+
+    <section class="stage">
+      <video id="video" playsinline muted autoplay disablepictureinpicture></video>
+    </section>
+
+    <footer class="info">
+      <div id="status">Ready.</div>
+      <div class="tips">
+        * 初回は<span class="kbd">Start</span>を押して権限許可。
+        モバイルは背面カメラ優先（環境によっては前面になることあり）。
+      </div>
+    </footer>
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

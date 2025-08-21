@@ -1,0 +1,16 @@
+{
+  "name": "webcam-reso",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^2.1.0",
+    "terser": "^5.43.1",
+    "vite": "^7.1.2"
+  }
+}
