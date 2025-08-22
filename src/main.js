@@ -162,7 +162,7 @@ let detector = null;
 async function initModel() {
   await tf.setBackend('webgl');  // 必要に応じて 'wasm' 等
   await tf.ready();
-  model = await tf.loadGraphModel('/model/model.json');
+  model = await tf.loadGraphModel(`${import.meta.env.BASE_URL}model/model.json`);
 
   // ウォームアップ（モデルに合わせてサイズを調整）
   const warm = tf.ones([1, 300, 300, 3], 'int32'); // 例: 300x300
