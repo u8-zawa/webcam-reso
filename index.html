@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
   <title>Webcam (Mobile, Resolution Switch)</title>
   <link rel="stylesheet" href="/src/style.css" />
@@ -24,11 +25,16 @@
 
         <button id="startBtn" class="btn primary">Start</button>
         <button id="stopBtn" class="btn">Stop</button>
+        <label>
+          <input type="checkbox" id="inferToggle" />
+          推論を実行
+        </label>
       </div>
     </header>
 
     <section class="stage">
       <video id="video" playsinline muted autoplay disablepictureinpicture></video>
+      <canvas id="canvas"></canvas>
     </section>
 
     <footer class="info">

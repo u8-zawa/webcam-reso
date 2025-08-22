@@ -1,3 +1,6 @@
+import * as tf from '@tensorflow/tfjs';
+import { Detector } from './detect.js';
+
 const resolutions = {
   "3840x2160": { width: 3840, height: 2160 },
   "2880x1620": { width: 2880, height: 1620 },
@@ -6,6 +9,7 @@ const resolutions = {
 
 const els = {
   video: document.getElementById("video"),
+  canvas: document.getElementById("canvas"),
   resolution: document.getElementById("resolution"),
   startBtn: document.getElementById("startBtn"),
   stopBtn: document.getElementById("stopBtn"),
@@ -119,6 +123,19 @@ async function updateInfo() {
   log(
     `Actual: ${settings.width}×${settings.height} @${settings.frameRate || "?"}fps  |  facingMode=${settings.facingMode || facing}`
   );
+  
+  // Canvasのサイズをビデオのサイズに合わせて調整
+  updateCanvasSize();
+}
+
+function updateCanvasSize() {
+  if (!els.video || !els.canvas) return;
+  
+  const videoRect = els.video.getBoundingClientRect();
+  els.canvas.width = videoRect.width;
+  els.canvas.height = videoRect.height;
+  els.canvas.style.width = videoRect.width + 'px';
+  els.canvas.style.height = videoRect.height + 'px';
 }
 
 els.startBtn.addEventListener("click", startStream);
@@ -133,5 +150,57 @@ window.addEventListener("orientationchange", () => {
   updateInfo();
 });
 
+// ウィンドウサイズ変更時にCanvasサイズを調整
+window.addEventListener("resize", updateCanvasSize);
+
 // ページ離脱時に解放
 window.addEventListener("pagehide", stopStream);
+
+let model = null;
+let detector = null;
+
+async function initModel() {
+  await tf.setBackend('webgl');  // 必要に応じて 'wasm' 等
+  await tf.ready();
+  model = await tf.loadGraphModel('/model/model.json');
+
+  // ウォームアップ（モデルに合わせてサイズを調整）
+  const warm = tf.ones([1, 300, 300, 3], 'int32'); // 例: 300x300
+  const out = await model.executeAsync(warm);
+  warm.dispose();
+  if (Array.isArray(out)) out.forEach(t => t?.dispose?.());
+  else out?.dispose?.();
+
+  console.log('Model ready.');
+}
+
+// 推論トグルのハンドラ
+function attachInferenceToggle() {
+  const toggle = document.getElementById('inferToggle');
+  toggle.addEventListener('change', () => {
+    if (!model || !els.video.srcObject) {
+      console.warn('model or stream not ready.');
+      toggle.checked = false;
+      return;
+    }
+    if (toggle.checked) {
+      if (!detector) {
+        detector = new Detector(model, els.video, els.canvas.getContext('2d'), {
+          inputSize: 300,    // モデルに合わせる
+          useRAF: true,      // rAF駆動（UI描画と同期）
+          intervalMs: 100,   // setTimeout駆動時の間隔（useRAF:falseの時）
+        });
+      }
+      detector.start();
+      console.log('inference started');
+    } else {
+      detector?.stop();
+      console.log('inference stopped');
+    }
+  });
+}
+
+(async () => {
+  await initModel();
+  attachInferenceToggle();
+})();

@@ -103,6 +103,14 @@ video {
   background: #000;
 }
 
+canvas {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
 .info {
   color: var(--muted);
   font-size: 13px;
